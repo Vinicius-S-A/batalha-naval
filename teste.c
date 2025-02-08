@@ -11,6 +11,7 @@
 // - Opção de parar o jogo em sua rodada
 // - Cada jogador tem o direito a três bombardeios por turno;
 // - Ao acabar o jogo, deve fornecer op¸c˜oes para jogar novamente, voltar ao menu principal ou sair do jogo
+// - Detectar quando navio é afundado
 
 int main() {
     srand(time(NULL));
