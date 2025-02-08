@@ -3,34 +3,30 @@
 #include <time.h>
 
 // TO DO
-// - Esconder os navios inimigos
-// - Config para tamanho máximo do campo (quantidade de células)
-// - Config para quantidade de embarcações dos jogadores
-// - Esconder os navios inimigos
-// - Conferir para ver se pode usar essas duas libs "<time.h>" e "<stdlib.h>"
-// - Opção de parar o jogo em sua rodada
-// - Cada jogador tem o direito a três bombardeios por turno;
-// - Ao acabar o jogo, deve fornecer op¸c˜oes para jogar novamente, voltar ao menu principal ou sair do jogo
-// - Detectar quando navio é afundado
+// - Ao acabar o jogo, deve fornecer opcao para jogar novamente (entra direto no jogo)
+// - Conferir quando um navio é afundado
 
 int main() {
     srand(time(NULL));
 
     int tamanhoCampo = 15;
     int qtdeEmbarcacoes = 4;
+    int esconderInimigo = 1;
 
-    int campoHumano[tamanhoCampo], campoComputador[tamanhoCampo];
     int posicaoBombardeio;
-    int jogoAtivo = 1;
+    int maxBombardeios = 3;
+    int continuarJogo = 1;
 
-    while (jogoAtivo) {
+    while (continuarJogo) {
         printf("\nMenu Principal:\n");
         printf("1. Novo Jogo\n");
         printf("2. Configurar\n");
         printf("3. Sair\n");
-        printf("Escolha uma opção: ");
+        printf("Escolha uma opcao: ");
         int opcao;
         scanf("%d", &opcao);
+
+        int campoHumano[tamanhoCampo], campoComputador[tamanhoCampo];
 
         switch (opcao) {
             case 1:
@@ -41,10 +37,10 @@ int main() {
 
                 int embarcacoesPosicionadasHumano = 0;
                 while (embarcacoesPosicionadasHumano < qtdeEmbarcacoes) {
-                    int posicao = rand() % (tamanhoCampo-1);
-                    if (campoHumano[posicao] == 7 && campoHumano[posicao+1] == 7) {
+                    int posicao = rand() % (tamanhoCampo - 1);
+                    if (campoHumano[posicao] == 7 && campoHumano[posicao + 1] == 7) {
                         campoHumano[posicao] = 1;
-                        campoHumano[posicao+1] = 1;
+                        campoHumano[posicao + 1] = 1;
                         embarcacoesPosicionadasHumano++;
                     }
                 }
@@ -52,16 +48,17 @@ int main() {
                 int embarcacoesPosicionadasComputador = 0;
                 while (embarcacoesPosicionadasComputador < qtdeEmbarcacoes) {
                     int posicao = rand() % tamanhoCampo;
-                    if (campoComputador[posicao] == 7 && campoComputador[posicao+1] == 7) {
+                    if (campoComputador[posicao] == 7 && campoComputador[posicao + 1] == 7) {
                         campoComputador[posicao] = 1;
-                        campoComputador[posicao+ 1] = 1;
+                        campoComputador[posicao + 1] = 1;
                         embarcacoesPosicionadasComputador++;
                     }
                 }
 
-                int vitoriaHumano = 0, vitoriaComputador = 0;
+                int vitoriaHumano = 0, vitoriaComputador = 0, pararJogo = 0;
 
-                while (!vitoriaHumano && !vitoriaComputador) {
+                while (!vitoriaHumano && !vitoriaComputador && !pararJogo) {
+                    int bombardeiosRestantes = maxBombardeios;
                     printf("\nSeu campo: \n");
                     for (int i = 0; i < tamanhoCampo; i++) {
                         if (campoHumano[i] == 7) {
@@ -86,12 +83,13 @@ int main() {
                     }
 
                     printf("\n");
-                    printf("\n");
-                    printf("\n");
-
                     printf("\nCampo Inimigo: \n");
                     for (int i = 0; i < tamanhoCampo; i++) {
-                        printf(" %d ", campoComputador[i]);
+                        if (esconderInimigo && campoComputador[i] == 1) {
+                            printf(" 7 ");
+                        } else {
+                            printf(" %d ", campoComputador[i]);
+                        }
                     }
                     printf("\n");
 
@@ -108,88 +106,107 @@ int main() {
                         }
                     }
                     printf("\n");
-                    printf("\n");
-                    printf("\n");
 
-                    printf("\nSeu turno! Escolha uma posicao para bombardear (0 a %d): ", tamanhoCampo - 1);
-                    scanf("%d", &posicaoBombardeio);
+                    printf("\nSeu turno! Voce tem %d bombardeios restantes.\n", bombardeiosRestantes);
+                    while (bombardeiosRestantes > 0) {
+                        printf("Escolha uma posicao para bombardear (0 a %d), ou -1 para parar o jogo: ", tamanhoCampo - 1);
+                        scanf("%d", &posicaoBombardeio);
 
-                    if (campoComputador[posicaoBombardeio] != 0 && campoComputador[posicaoBombardeio] != 3) {
-                        if (campoComputador[posicaoBombardeio] == 7) {
-                            printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-
-                            printf("___________________\n");
-                            printf("[      AGUA!      ]\n\n");
-
-                            campoComputador[posicaoBombardeio] = 0;
-                        } else if (campoComputador[posicaoBombardeio] == 1) {
-                            printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
-
-                            printf("______________________\n");
-                            printf("[      IMPACTO!      ]\n\n");
-                            
-                            campoComputador[posicaoBombardeio] = 2;
-                        }
-                    } else {
-                        printf("A posicao ja foi bombardeada antes. Tente outra.\n");
-                        continue;
-                    }
-
-                    vitoriaComputador = 1;
-                    for (int i = 0; i < tamanhoCampo; i++) {
-                        if (campoComputador[i] == 1) {
-                            vitoriaComputador = 0;
+                        if (posicaoBombardeio == -1) {
+                            printf("Voce escolheu parar o jogo.\n");
+                            pararJogo = 1;
                             break;
                         }
-                    }
 
-                    if (vitoriaComputador) {
-                        printf("\nVoce venceu! O computador perdeu.\n");
-                        break;
-                    }
+                        if (campoComputador[posicaoBombardeio] != 0 && campoComputador[posicaoBombardeio] != 3) {
+                            if (campoComputador[posicaoBombardeio] == 7) {
+                                printf("\nAGUA!\n");
+                                campoComputador[posicaoBombardeio] = 0;
+                            } else if (campoComputador[posicaoBombardeio] == 1) {
+                                printf("\nIMPACTO!\n");
+                                campoComputador[posicaoBombardeio] = 2;
 
-                    printf("\nAgora e o turno do computador...\n");
-                    int posicaoComputador = rand() % tamanhoCampo;
-                    while (campoHumano[posicaoComputador] == 0 || campoHumano[posicaoComputador] == 3) {
-                        posicaoComputador = rand() % tamanhoCampo;
-                    }
-
-                    printf("O computador bombardeou a posicao %d.\n", posicaoComputador);
-                    if (campoHumano[posicaoComputador] == 7) {
-                        printf("\n\n___________________\n");
-                        printf("[      AGUA!      ]\n\n");
-                        campoHumano[posicaoComputador] = 0;
-                    } else if (campoHumano[posicaoComputador] == 1) {
-                        printf("\n\n______________________\n");
-                        printf("[      IMPACTO!      ]\n\n");
-                        campoHumano[posicaoComputador] = 2;
-                    }
-
-                    vitoriaHumano = 1;
-                    for (int i = 0; i < tamanhoCampo; i++) {
-                        if (campoHumano[i] == 1) {
-                            vitoriaHumano = 0;
-                            break;
+                                vitoriaHumano = 1;
+                                for (int i = 0; i < tamanhoCampo; i++) {
+                                    if (campoComputador[i] == 1) {
+                                        vitoriaHumano = 0;
+                                        break;
+                                    }
+                                }
+            
+                                if (vitoriaHumano) {
+                                    printf("\nVoce venceu! O computador perdeu.\n");
+                                    break;
+                                }
+                            }
+                            bombardeiosRestantes--;
+                        } else {
+                            printf("A posicao ja foi bombardeada antes. Tente outra.\n");
                         }
                     }
 
-                    if (vitoriaHumano) {
-                        printf("\nVocê perdeu! O computador venceu.\n");
-                        break;
+                    if (!vitoriaHumano) {
+                        printf("\nAgora e o turno do computador...\n");
+                        for (int i = 0; i < 3; i++) {  // Computador tem 3 bombardeios
+                            int posicaoComputador = rand() % tamanhoCampo;
+                            while (campoHumano[posicaoComputador] == 0 || campoHumano[posicaoComputador] == 3) {
+                                posicaoComputador = rand() % tamanhoCampo;
+                            }
+    
+                            printf("O computador bombardeou a posicao %d.\n", posicaoComputador);
+                            if (campoHumano[posicaoComputador] == 7) {
+                                printf("\nAGUA!\n");
+                                campoHumano[posicaoComputador] = 0;
+                            } else if (campoHumano[posicaoComputador] == 1) {
+                                printf("\nIMPACTO!\n");
+                                campoHumano[posicaoComputador] = 2;
+                            }
+    
+                            vitoriaComputador = 1;
+                            for (int i = 0; i < tamanhoCampo; i++) {
+                                if (campoHumano[i] == 1) {
+                                    vitoriaComputador = 0;
+                                    break;
+                                }
+                            }
+    
+                            if (vitoriaComputador) {
+                                printf("\nVoce perdeu! O computador venceu.\n");
+                                break;
+                            }
+                        }    
                     }
                 }
 
+                printf("\nDeseja jogar novamente?\n1. Sim\n2. Voltar ao menu\n3. Sair\n");
+                int jogarNovamente;
+                scanf("%d", &jogarNovamente);
+                if (jogarNovamente == 3) {
+                    continuarJogo = 0;
+                    break;
+                } else if (jogarNovamente == 2) {
+                    continuarJogo = 1;
+                } else if (jogarNovamente == 1) { // AQUI DEVE VOLTAR AO JOGO, NÃO AO MENU
+                    continuarJogo = 1;
+                }
+
                 break;
-            case 2: // CONFIGURAÇÕES
-                jogoAtivo = 0;
+            case 2: 
+                printf("\nConfiguracoes:\n");
+                printf("Digite o tamanho do campo (minimo 15): ");
+                scanf("%d", &tamanhoCampo);
+                if (tamanhoCampo < 15) tamanhoCampo = 15;
+
+                printf("Digite a quantidade de embarcacoes (minimo 1): ");
+                scanf("%d", &qtdeEmbarcacoes);
+                if (qtdeEmbarcacoes < 1) qtdeEmbarcacoes = 1;
 
                 break;
             case 3:
-                jogoAtivo = 0;
+                continuarJogo = 0; 
                 break;
-
-            default: // VALIDAR, POIS ESTÁ QUEBRANDO QUANDO CAI AQUI E CONTINUANDO O LOOP
-                printf("Opção inválida.\n");
+            default:
+                printf("Opcao invalida!\n");
         }
     }
 
