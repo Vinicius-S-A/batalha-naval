@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <time.h>
 
+// TO DO
+// Resolver problema do loop de criação de embarcações
+// Identificar quando navio afunda
+
 int main() {
     srand(time(NULL));
 
@@ -193,6 +197,17 @@ int main() {
             printf("Digite a quantidade de embarcacoes (minimo 1): ");
             scanf("%d", &qtdeEmbarcacoes);
             if (qtdeEmbarcacoes < 1) qtdeEmbarcacoes = 1;
+
+            if (qtdeEmbarcacoes > tamanhoCampo/2) {
+                printf("Aviso: A quantidade de embarcacoes deve ser a metade que o tamanho do campo.\n");
+                if (tamanhoCampo % 2 == 0) {
+                    qtdeEmbarcacoes = tamanhoCampo/2;
+                } else {
+                    qtdeEmbarcacoes = (tamanhoCampo-1)/2;
+                }
+
+                printf("%d", qtdeEmbarcacoes);
+            }
 
         } else if (opcao == 3) {
             continuarJogo = 0;
