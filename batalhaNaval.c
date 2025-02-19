@@ -2,9 +2,21 @@
 #include <stdlib.h>
 #include <time.h>
 
-// TO DO
-// Resolver problema do loop de criação de embarcações
-// Identificar quando navio afunda
+
+int verificarNavioAfundado(int campo[], int tamanhoCampo, int *naviosAfundados) {
+    int novosNaviosAfundados = 0;
+    for (int i = 0; i < tamanhoCampo - 1; i++) {
+        if (campo[i] == 2 && campo[i + 1] == 2) {
+            if (naviosAfundados[i] == 0 && naviosAfundados[i + 1] == 0) {
+                novosNaviosAfundados++;
+                naviosAfundados[i] = 1;
+                naviosAfundados[i + 1] = 1;
+            }
+            i++; 
+        }
+    }
+    return novosNaviosAfundados;
+}
 
 int main() {
     srand(time(NULL));
@@ -30,6 +42,7 @@ int main() {
         scanf("%d", &opcao);
 
         int campoHumano[tamanhoCampo], campoComputador[tamanhoCampo];
+        int naviosAfundadosHumano[tamanhoCampo], naviosAfundadosComputador[tamanhoCampo];
 
         if (opcao == 1) {
             int jogarNovamente = 1;
@@ -37,6 +50,8 @@ int main() {
                 for (int i = 0; i < tamanhoCampo; i++) {
                     campoHumano[i] = 7;
                     campoComputador[i] = 7;
+                    naviosAfundadosHumano[i] = 0;
+                    naviosAfundadosComputador[i] = 0;
                 }
 
                 int embarcacoesPosicionadasHumano = 0;
@@ -129,6 +144,11 @@ int main() {
                                 printf("\nIMPACTO!\n");
                                 campoComputador[posicaoBombardeio] = 2;
 
+                                int novosNaviosAfundados = verificarNavioAfundado(campoComputador, tamanhoCampo, naviosAfundadosComputador);
+                                if (novosNaviosAfundados > 0) {
+                                    printf("\nNavio inimigo afundado!\n");
+                                }
+
                                 vitoriaHumano = 1;
                                 for (int i = 0; i < tamanhoCampo; i++) {
                                     if (campoComputador[i] == 1) {
@@ -163,6 +183,11 @@ int main() {
                             } else if (campoHumano[posicaoComputador] == 1) {
                                 printf("\nIMPACTO!\n");
                                 campoHumano[posicaoComputador] = 2;
+
+                                int novosNaviosAfundados = verificarNavioAfundado(campoHumano, tamanhoCampo, naviosAfundadosHumano);
+                                if (novosNaviosAfundados > 0) {
+                                    printf("\nSeu navio foi afundado!\n");
+                                }
                             }
 
                             vitoriaComputador = 1;
