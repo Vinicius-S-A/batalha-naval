@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <time.h>
 
+// TO DO
+// Resolver problema do loop de criação de embarcações
 
 int verificarNavioAfundado(int campo[], int tamanhoCampo, int *naviosAfundados) {
     int novosNaviosAfundados = 0;
@@ -12,7 +14,7 @@ int verificarNavioAfundado(int campo[], int tamanhoCampo, int *naviosAfundados) 
                 naviosAfundados[i] = 1;
                 naviosAfundados[i + 1] = 1;
             }
-            i++; 
+            i++;
         }
     }
     return novosNaviosAfundados;
@@ -66,13 +68,15 @@ int main() {
 
                 int embarcacoesPosicionadasComputador = 0;
                 while (embarcacoesPosicionadasComputador < qtdeEmbarcacoes) {
-                    int posicao = rand() % tamanhoCampo;
+                    int posicao = rand() % (tamanhoCampo - 1);
                     if (campoComputador[posicao] == 7 && campoComputador[posicao + 1] == 7) {
                         campoComputador[posicao] = 1;
                         campoComputador[posicao + 1] = 1;
                         embarcacoesPosicionadasComputador++;
                     }
                 }
+
+                printf("Embarcacoes posicionadas: Humano = %d, Computador = %d\n", embarcacoesPosicionadasHumano, embarcacoesPosicionadasComputador);
 
                 int vitoriaHumano = 0, vitoriaComputador = 0, pararJogo = 0;
 
@@ -136,43 +140,49 @@ int main() {
                             break;
                         }
 
-                        if (campoComputador[posicaoBombardeio] != 0 && campoComputador[posicaoBombardeio] != 3) {
-                            if (campoComputador[posicaoBombardeio] == 7) {
-                                printf("\nAGUA!\n");
-                                campoComputador[posicaoBombardeio] = 0;
-                            } else if (campoComputador[posicaoBombardeio] == 1) {
-                                printf("\nIMPACTO!\n");
-                                campoComputador[posicaoBombardeio] = 2;
+                        if (posicaoBombardeio < 0 || posicaoBombardeio >= tamanhoCampo) {
+                            printf("Posicao invalida! Tente novamente.\n");
+                            continue;
+                        }
 
-                                int novosNaviosAfundados = verificarNavioAfundado(campoComputador, tamanhoCampo, naviosAfundadosComputador);
-                                if (novosNaviosAfundados > 0) {
-                                    printf("\nNavio inimigo afundado!\n");
-                                }
+                        if (campoComputador[posicaoBombardeio] == 0 || campoComputador[posicaoBombardeio] == 2) {
+                            printf("A posicao ja foi bombardeada antes. Tente outra.\n");
+                            continue;
+                        }
 
-                                vitoriaHumano = 1;
-                                for (int i = 0; i < tamanhoCampo; i++) {
-                                    if (campoComputador[i] == 1) {
-                                        vitoriaHumano = 0;
-                                        break;
-                                    }
-                                }
+                        if (campoComputador[posicaoBombardeio] == 7) {
+                            printf("\nAGUA!\n");
+                            campoComputador[posicaoBombardeio] = 0;
+                        } else if (campoComputador[posicaoBombardeio] == 1) {
+                            printf("\nIMPACTO!\n");
+                            campoComputador[posicaoBombardeio] = 2;
 
-                                if (vitoriaHumano) {
-                                    printf("\nVoce venceu! O computador perdeu.\n");
+                            int novosNaviosAfundados = verificarNavioAfundado(campoComputador, tamanhoCampo, naviosAfundadosComputador);
+                            if (novosNaviosAfundados > 0) {
+                                printf("\nNavio inimigo afundado!\n");
+                            }
+
+                            vitoriaHumano = 1;
+                            for (int i = 0; i < tamanhoCampo; i++) {
+                                if (campoComputador[i] == 1) {
+                                    vitoriaHumano = 0;
                                     break;
                                 }
                             }
-                            bombardeiosRestantes--;
-                        } else {
-                            printf("A posicao ja foi bombardeada antes. Tente outra.\n");
+
+                            if (vitoriaHumano) {
+                                printf("\nVoce venceu! O computador perdeu.\n");
+                                break;
+                            }
                         }
+                        bombardeiosRestantes--;
                     }
 
                     if (!vitoriaHumano) {
                         printf("\nAgora e o turno do computador...\n");
                         for (int i = 0; i < 3; i++) {
                             int posicaoComputador = rand() % tamanhoCampo;
-                            while (campoHumano[posicaoComputador] == 0 || campoHumano[posicaoComputador] == 3) {
+                            while (campoHumano[posicaoComputador] == 0 || campoHumano[posicaoComputador] == 2) {
                                 posicaoComputador = rand() % tamanhoCampo;
                             }
 
@@ -223,15 +233,10 @@ int main() {
             scanf("%d", &qtdeEmbarcacoes);
             if (qtdeEmbarcacoes < 1) qtdeEmbarcacoes = 1;
 
-            if (qtdeEmbarcacoes > tamanhoCampo/2) {
-                printf("Aviso: A quantidade de embarcacoes deve ser a metade que o tamanho do campo.\n");
-                if (tamanhoCampo % 2 == 0) {
-                    qtdeEmbarcacoes = tamanhoCampo/2;
-                } else {
-                    qtdeEmbarcacoes = (tamanhoCampo-1)/2;
-                }
-
-                printf("%d", qtdeEmbarcacoes);
+            if (qtdeEmbarcacoes > tamanhoCampo / 2) {
+                printf("Aviso: A quantidade de embarcacoes deve ser no maximo a metade do tamanho do campo.\n");
+                qtdeEmbarcacoes = tamanhoCampo / 2;
+                printf("Quantidade de embarcacoes ajustada para %d.\n", qtdeEmbarcacoes);
             }
 
         } else if (opcao == 3) {
